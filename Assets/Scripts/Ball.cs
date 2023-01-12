@@ -46,6 +46,11 @@ public class Ball : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Transform parent = collision.transform.parent;
+        if (parent != null && parent.tag.Equals("Brick"))
+        {
+            parent.gameObject.SetActive(false);
+        }
         if (collision.transform.tag.Equals("vReflect"))
         {
             moveVec = new Vector2(-moveVec.x, moveVec.y).normalized;
@@ -53,11 +58,6 @@ public class Ball : MonoBehaviour
         if (collision.transform.tag.Equals("hReflect"))
         {
             moveVec = new Vector2(moveVec.x, -moveVec.y).normalized;
-        }
-        GameObject parent = collision.transform.parent.gameObject;
-        if (parent != null && parent.tag.Equals("Brick"))
-        {
-            parent.SetActive(false);
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
