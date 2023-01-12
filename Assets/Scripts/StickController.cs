@@ -7,7 +7,6 @@ using UnityEngine;
 public class StickController : MonoBehaviour
 {
     public float moveSpeed;
-    Rigidbody body;
     float xMove;
     // Start is called before the first frame update
     void Start()
@@ -24,7 +23,7 @@ public class StickController : MonoBehaviour
     private void FixedUpdate()
     {/*
         body.velocity = new Vector3(xMove*moveSpeed*Time.deltaTime, 0, 0);*/
-        float xPos = transform.position.x + xMove * moveSpeed;
+        float xPos = transform.position.x + xMove * moveSpeed * Time.deltaTime;
         transform.position = new Vector3(Math.Clamp(xPos,-2,2),-4,0);
     }
 }

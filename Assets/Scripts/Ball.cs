@@ -6,54 +6,65 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    public GameObject stick;
-    public float shootPower;
-    Rigidbody ballRb;
-    bool isShot = false;
-    Vector3 velocity;
+    public float moveSpeed;
+    public StickController stick;
+    public bool isDead;
+
+    Vector2 moveVec;
+    bool isShot;
+
     // Start is called before the first frame update
     void Start()
     {
-        ballRb= GetComponent<Rigidbody>();
+        moveVec= Vector2.zero;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isShot)
-        {
-            transform.position = stick.transform.position;
-            transform.position += new Vector3(0, 0.3f, 0);
-        }
-        else
-        {
-
-        }
-        if (Input.GetKeyDown(KeyCode.Space) && !isShot)
+        if(!isShot && Input.GetKeyDown(KeyCode.Space))
         {
             Shoot();
             isShot = true;
         }
     }
+    private void FixedUpdate()
+    {
+        if (!isShot)
+        {
+            transform.position = stick.transform.position + new Vector3(0, 0.25f, 0);
+        }
+        else
+        {
+            transform.Translate(moveVec * moveSpeed * Time.deltaTime);
+        }
+    }
 
     private void Shoot()
     {
-        ballRb.AddForce(new Vector3(transform.position.x, 1, 0).normalized * shootPower);
-        velocity = ballRb.velocity;
+        moveVec = new Vector2(transform.position.x, 1).normalized;
     }
-
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.tag.Equals("Vertical"))
+        if (collision.transform.tag.Equals("vReflect"))
         {
-            ballRb.velocity = new Vector3(-velocity.x,velocity.y,velocity.z);
-            velocity = ballRb.velocity;
-            /*
-            collision.gameObject.SetActive(false);*/
+            moveVec = new Vector2(-moveVec.x, moveVec.y).normalized;
         }
-        if (collision.transform.tag.Equals("Horizontal"))
+        if (collision.transform.tag.Equals("hReflect"))
         {
-            ballRb.velocity.Set(ballRb.velocity.x, -ballRb.velocity.y, ballRb.velocity.z);
+            moveVec = new Vector2(moveVec.x, -moveVec.y).normalized;
+        }
+        GameObject parent = collision.transform.parent.gameObject;
+        if (parent != null && parent.tag.Equals("Brick"))
+        {
+            parent.SetActive(false);
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag.Equals("Floor"))
+        {
+            gameObject.SetActive(false);
         }
     }
 }

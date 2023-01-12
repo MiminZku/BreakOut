@@ -5,8 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Brick
-  - Vertical
-  - Horizontal
+  - vReflect
+  - hReflect
+  - Floor
   layers:
   - Default
   - TransparentFX
